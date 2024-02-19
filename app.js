@@ -1,12 +1,12 @@
 const express = require("express");
-const { getTopics } = require("./controller/topics.controller");
-const { getEndpoints } = require("./controller/api.controller");
+const { getTopics } = require("./controllers/topics.controller");
+const { getEndpoints } = require("./controllers/api.controller");
 const {
   getArticleById,
   getAllArticles,
   getArticleCommentsById,
   addComment,
-} = require("./controller/articles.controller");
+} = require("./controllers/articles.controller");
 const {
   psqlErrors,
   customErrors,
