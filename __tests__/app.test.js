@@ -153,4 +153,39 @@ describe("/api/articles/:article_id/comments", () => {
         expect(msg).toBe("Bad request");
       });
   });
+  test("POST 201: should respond with inserted comment", () => {
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send({ username: "lurker", body: "test comments" })
+      .set("Accept", "application/json")
+      .expect(201)
+      .then(({ body: { comment } }) => {
+        expect(comment.body).toBe("test comments");
+        expect(comment.author).toBe("lurker");
+        expect(comment.article_id).toBe(1);
+        expect(comment).toHaveProperty("comment_id");
+        expect(comment).toHaveProperty("votes");
+        expect(comment).toHaveProperty("created_at");
+      });
+  });
+  test("POST 404: should respond with appropriate status and msg when requesting non-existent id", () => {
+    return request(app)
+      .post("/api/articles/99999/comments")
+      .send({ username: "lurker", body: "test comments" })
+      .set("Accept", "application/json")
+      .expect(404)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Not found");
+      });
+  });
+  test("POST 400: should respond with appropriate status and msg when requesting invalid id", () => {
+    return request(app)
+      .post("/api/articles/invalidId/comments")
+      .send({ username: "lurker", body: "test comments" })
+      .set("Accept", "application/json")
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Bad request");
+      });
+  });
 });
