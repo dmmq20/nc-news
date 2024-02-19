@@ -3,6 +3,9 @@ const app = require("../app");
 const seed = require("../db/seeds/seed");
 const testData = require("../db/data/test-data");
 const db = require("../db/connection");
+const endpointsJson = require("../endpoints.json");
+
+const allEndpoints = Object.keys(endpointsJson);
 
 beforeEach(() => {
   return seed(testData);
@@ -39,9 +42,9 @@ describe("/api", () => {
       .get("/api")
       .expect(200)
       .then(({ body: { endpoints } }) => {
-        expect(endpoints).toHaveProperty("GET /api");
-        expect(endpoints).toHaveProperty("GET /api/topics");
-        expect(endpoints).toHaveProperty("GET /api/articles");
+        allEndpoints.forEach((endpoint) => {
+          expect(endpoints).toHaveProperty(endpoint);
+        });
       });
   });
   test("GET 404: should respond with approriate status and message when sending request to endpoint that doesn't exist", () => {
