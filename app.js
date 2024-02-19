@@ -1,41 +1,33 @@
 const express = require("express");
 const { getTopics } = require("./controller/topics.controller");
-const { endpoints } = require("./controller/api.controller");
+const { getEndpoints } = require("./controller/api.controller");
 const {
   getArticleById,
   getAllArticles,
   getArticleCommentsById,
+  addComment,
 } = require("./controller/articles.controller");
+const {
+  psqlErrors,
+  customErrors,
+  serverError,
+  invalidRoute,
+} = require("./middleware/errorHandlers");
 
 const app = express();
+app.use(express.json());
 
 app.get("/api/topics", getTopics);
-app.get("/api", endpoints);
+app.get("/api", getEndpoints);
 app.get("/api/articles/:article_id", getArticleById);
 app.get("/api/articles", getAllArticles);
 app.get("/api/articles/:article_id/comments", getArticleCommentsById);
 
-app.all("*", (req, res, next) => {
-  res.status(404).send({ msg: "Invalid url" });
-  next();
-});
+app.post("/api/articles/:article_id/comments", addComment);
 
-app.use((err, req, res, next) => {
-  if (err.code === "23502" || err.code === "22P02") {
-    res.status(400).send({ msg: "Bad request" });
-  }
-  next(err);
-});
-
-app.use((err, req, res, next) => {
-  if (err.status && err.msg) {
-    res.status(err.status).send({ msg: err.msg });
-  }
-  next(err);
-});
-
-app.use((err, req, res, next) => {
-  res.status(500).send("Server Error!");
-});
+app.all("*", invalidRoute);
+app.use(psqlErrors);
+app.use(customErrors);
+app.use(serverError);
 
 module.exports = app;
