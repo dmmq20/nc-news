@@ -117,3 +117,40 @@ describe("/api/articles", () => {
       });
   });
 });
+
+describe("/api/articles/:article_id/comments", () => {
+  test("GET 200: should respond with comments associated with the article_id sorted by date", () => {
+    return request(app)
+      .get("/api/articles/1/comments")
+      .expect(200)
+      .then((response) => {
+        const { comments } = response.body;
+        expect(comments.length > 0).toBe(true);
+        expect(comments).toBeSortedBy("created_at", { descending: true });
+        comments.forEach((comment) => {
+          expect(comment.article_id).toBe(1);
+          expect(comment).toHaveProperty("comment_id");
+          expect(comment).toHaveProperty("votes");
+          expect(comment).toHaveProperty("created_at");
+          expect(comment).toHaveProperty("author");
+          expect(comment).toHaveProperty("body");
+        });
+      });
+  });
+  test("GET 404: should respond with appropriate status and msg if requesting non-existent id", () => {
+    return request(app)
+      .get("/api/articles/99999/comments")
+      .expect(404)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("No comments available");
+      });
+  });
+  test("GET 400: should respond with appropriate status and msg if requesting invalid id", () => {
+    return request(app)
+      .get("/api/articles/notAValidID/comments")
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Bad request");
+      });
+  });
+});

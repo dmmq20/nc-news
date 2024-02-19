@@ -36,4 +36,23 @@ function selectArticles() {
     });
 }
 
-module.exports = { selectArticleById, selectArticles };
+function selectArticleCommentsById(id) {
+  return db
+    .query(
+      `
+    SELECT * FROM comments
+    WHERE article_id = $1
+    ORDER BY created_at DESC;
+    `,
+      [id]
+    )
+    .then(({ rows }) => {
+      return rows;
+    });
+}
+
+module.exports = {
+  selectArticleById,
+  selectArticles,
+  selectArticleCommentsById,
+};
