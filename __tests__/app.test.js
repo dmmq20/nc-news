@@ -32,3 +32,24 @@ describe("/api/topics", () => {
       });
   });
 });
+
+describe("/api", () => {
+  test("GET 200: should respond with an object describing all available api endpoints", () => {
+    return request(app)
+      .get("/api")
+      .expect(200)
+      .then(({ body: { endpoints } }) => {
+        expect(endpoints).toHaveProperty("GET /api");
+        expect(endpoints).toHaveProperty("GET /api/topics");
+        expect(endpoints).toHaveProperty("GET /api/articles");
+      });
+  });
+  test("GET 404: should respond with approriate status and message when sending request to endpoint that doesn't exist", () => {
+    return request(app)
+      .get("/notARoute")
+      .expect(404)
+      .then((response) => {
+        expect(response.body.msg).toBe("Invalid url");
+      });
+  });
+});
