@@ -26,9 +26,6 @@ function getArticleCommentsById(req, res, next) {
   const { article_id } = req.params;
   return selectArticleCommentsById(article_id)
     .then((comments) => {
-      if (!comments.length) {
-        return Promise.reject({ status: 404, msg: "No comments available" });
-      }
       res.status(200).send({ comments });
     })
     .catch(next);
