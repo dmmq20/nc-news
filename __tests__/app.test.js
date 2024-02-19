@@ -123,10 +123,8 @@ describe("/api/articles/:article_id/comments", () => {
     return request(app)
       .get("/api/articles/1/comments")
       .expect(200)
-      .then((response) => {
-        const { comments } = response.body;
+      .then(({ body: { comments } }) => {
         expect(comments.length > 0).toBe(true);
-        expect(comments).toBeSortedBy("created_at", { descending: true });
         comments.forEach((comment) => {
           expect(comment.article_id).toBe(1);
           expect(comment).toHaveProperty("comment_id");
@@ -137,12 +135,21 @@ describe("/api/articles/:article_id/comments", () => {
         });
       });
   });
+  test("GET 200: comments should be sorted by date", () => {
+    return request(app)
+      .get("/api/articles/1/comments")
+      .expect(200)
+      .then(({ body: { comments } }) => {
+        expect(comments.length > 0).toBe(true);
+        expect(comments).toBeSortedBy("created_at", { descending: true });
+      });
+  });
   test("GET 404: should respond with appropriate status and msg if requesting non-existent id", () => {
     return request(app)
       .get("/api/articles/99999/comments")
       .expect(404)
       .then(({ body: { msg } }) => {
-        expect(msg).toBe("No comments available");
+        expect(msg).toBe("Not found");
       });
   });
   test("GET 400: should respond with appropriate status and msg if requesting invalid id", () => {
@@ -151,6 +158,14 @@ describe("/api/articles/:article_id/comments", () => {
       .expect(400)
       .then(({ body: { msg } }) => {
         expect(msg).toBe("Bad request");
+      });
+  });
+  test("GET 200: should respond with correct status and empty array if article exists but has no comments", () => {
+    return request(app)
+      .get("/api/articles/13/comments")
+      .expect(200)
+      .then(({ body: { comments } }) => {
+        expect(comments).toEqual([]);
       });
   });
   test("POST 201: should respond with inserted comment", () => {
