@@ -203,4 +203,24 @@ describe("/api/articles/:article_id/comments", () => {
         expect(msg).toBe("Bad request");
       });
   });
+  test("POST 404: should respond with appropriate status and msg when request is sent with incorrect user", () => {
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send({ username: "userNotInDb", body: "test comments" })
+      .set("Accept", "application/json")
+      .expect(404)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Not found");
+      });
+  });
+  test("POST 400: should respond with appropriate status and msg when request is sent without body", () => {
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send({ username: "lurker" })
+      .set("Accept", "application/json")
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Bad request");
+      });
+  });
 });
