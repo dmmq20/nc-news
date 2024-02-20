@@ -47,7 +47,7 @@ Make sure you have the following installed on your system:
 
 ### Usage
 
-To run all tests, run:
+To run all tests:
 
 ```bash
 npm test
