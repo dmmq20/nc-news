@@ -1,4 +1,6 @@
-# Northcoders News API
+# NC News App
+
+The backend of a small Reddit-like app. It is currently hosted at: `https://nc-news-1.onrender.com/`
 
 If you'd like to run this project you'll need to run the following commands:
 
