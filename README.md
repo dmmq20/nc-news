@@ -1,22 +1,62 @@
 # NC News App
 
-The backend of a small Reddit-like app. It is currently hosted at: `https://nc-news-1.onrender.com/`
+The backend of a small Reddit-like app. It is currently hosted at: https://nc-news-1.onrender.com/
 
-If you'd like to run this project you'll need to run the following commands:
+## Getting Started
 
-1. Clone the repo:
-   `git clone https://github.com/dmmq20/nc-news.git && cd nc-news`
+To run this project locally, follow these steps:
 
-2. Create .env files
-   `echo PGDATABASE=nc_news_test > .env.test && echo PGDATABASE=nc_news > .env.development`
+### Prerequisites
 
-3. Install dependencies
-   `npm install`
+Make sure you have the following installed on your system:
 
-4. Create databases
-   `npm run setup-dbs`
+- Node.js (minimum version 20.11.0)
+- PostgreSQL (minimum version 14.10)
 
-5. Seed dbs
-   `npm run seed`
+### Installation
 
-To run this successfully you will need atleast Node v20.11.0 and PostgresQL 14.10
+1. Clone the repository:
+
+   ```bash
+   git clone https://github.com/dmmq20/nc-news.git && cd nc-news
+   ```
+
+2. Create .env files for development and testing environments:
+
+   ```bash
+   echo PGDATABASE=nc_news_test > .env.test && echo PGDATABASE=nc_news > .env.development
+   ```
+
+3. Install dependencies:
+
+   ```bash
+   npm install
+   ```
+
+4. Create databases:
+
+   ```bash
+   npm run setup-dbs
+   ```
+
+5. Seed the databases:
+
+   ```bash
+   npm run seed
+   ```
+
+### Usage
+
+To start the server, run:
+
+```bash
+npm start
+```
+
+The server will be running on http://localhost:9090 by default.
+
+To run all tests, run:
+
+```bash
+npm test
+```
