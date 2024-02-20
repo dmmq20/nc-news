@@ -157,7 +157,7 @@ describe("/api/articles/:article_id/comments", () => {
       .get("/api/articles/99999/comments")
       .expect(404)
       .then(({ body: { msg } }) => {
-        expect(msg).toBe("Not found");
+        expect(msg).toBe("Article not found");
       });
   });
   test("GET 400: should respond with appropriate status and msg if requesting invalid id", () => {
