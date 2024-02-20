@@ -91,6 +91,23 @@ describe("/api/articles/:article_id", () => {
         expect(msg).toBe("Bad request");
       });
   });
+  test("GET 200: should have comment_count property", () => {
+    return request(app)
+      .get("/api/articles/1")
+      .expect(200)
+      .then(({ body: { article } }) => {
+        expect(article).toHaveProperty("comment_count");
+        expect(article.comment_count).toBe(11);
+      });
+  });
+  test("GET 200: should have 0 comment_count for articles with no comments", () => {
+    return request(app)
+      .get("/api/articles/2")
+      .expect(200)
+      .then(({ body: { article } }) => {
+        expect(article.comment_count).toBe(0);
+      });
+  });
 });
 
 describe("/api/articles", () => {

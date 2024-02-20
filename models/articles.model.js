@@ -4,9 +4,11 @@ function selectArticleById(id) {
   return db
     .query(
       `
-    SELECT * FROM articles
-    WHERE article_id = $1;
-    `,
+      select articles.*, CAST(COUNT(comment_id) as INTEGER) as comment_count from articles
+      left join comments on articles.article_id = comments.article_id
+      where articles.article_id = $1
+      group by articles.article_id;
+      `,
       [id]
     )
     .then(({ rows }) => {
