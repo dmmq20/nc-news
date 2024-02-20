@@ -9,7 +9,7 @@ function selectTopicByWord(topic) {
     .query(`SELECT * FROM topics WHERE slug = $1`, [topic])
     .then(({ rows }) => {
       if (rows.length === 0) {
-        return Promise.reject({ status: 400, msg: "Topic not found" });
+        return Promise.reject({ status: 404, msg: "Topic not found" });
       }
       return rows;
     });

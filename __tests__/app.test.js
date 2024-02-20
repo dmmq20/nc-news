@@ -141,10 +141,10 @@ describe("/api/articles", () => {
         });
       });
   });
-  test("GET 400: should respond with appropriate status and msg if query is invalid", () => {
+  test("GET 404: should respond with appropriate status and msg if query is invalid", () => {
     return request(app)
       .get("/api/articles?topic=notAValidTopic")
-      .expect(400)
+      .expect(404)
       .then(({ body: { msg } }) => {
         expect(msg).toBe("Topic not found");
       });
