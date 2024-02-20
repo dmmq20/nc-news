@@ -14,6 +14,7 @@ const {
   serverError,
   invalidRoute,
 } = require("./middleware/errorHandlers");
+const { removeComment } = require("./controllers/comments.controller");
 
 const app = express();
 app.use(express.json());
