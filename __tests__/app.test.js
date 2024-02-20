@@ -30,8 +30,8 @@ describe("/api/topics", () => {
     return request(app)
       .get("/api/notARoute")
       .expect(404)
-      .then((response) => {
-        expect(response.body.msg).toBe("Invalid url");
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Invalid url");
       });
   });
 });
@@ -51,8 +51,8 @@ describe("/api", () => {
     return request(app)
       .get("/notARoute")
       .expect(404)
-      .then((response) => {
-        expect(response.body.msg).toBe("Invalid url");
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Invalid url");
       });
   });
 });
@@ -62,24 +62,24 @@ describe("/api/articles/:article_id", () => {
     return request(app)
       .get("/api/articles/1")
       .expect(200)
-      .then((response) => {
-        const article = response.body.article;
-        expect(article.article_id).toBe(1);
-        expect(article).toHaveProperty("title");
-        expect(article).toHaveProperty("topic");
-        expect(article).toHaveProperty("author");
-        expect(article).toHaveProperty("body");
-        expect(article).toHaveProperty("created_at");
-        expect(article).toHaveProperty("votes");
-        expect(article).toHaveProperty("article_img_url");
+      .then(({ body: { article } }) => {
+        expect(article).toMatchObject({
+          article_id: 1,
+          title: expect.any(String),
+          topic: expect.any(String),
+          author: expect.any(String),
+          body: expect.any(String),
+          created_at: expect.any(String),
+          votes: expect.any(Number),
+          article_img_url: expect.any(String),
+        });
       });
   });
   test("GET 404: should response with appropriate status and msg when accessing non-existent id", () => {
     return request(app)
       .get("/api/articles/9999999")
       .expect(404)
-      .then((response) => {
-        const { msg } = response.body;
+      .then(({ body: { msg } }) => {
         expect(msg).toBe("Article not found");
       });
   });
@@ -87,8 +87,7 @@ describe("/api/articles/:article_id", () => {
     return request(app)
       .get("/api/articles/invalidId")
       .expect(400)
-      .then((response) => {
-        const { msg } = response.body;
+      .then(({ body: { msg } }) => {
         expect(msg).toBe("Bad request");
       });
   });
@@ -99,21 +98,28 @@ describe("/api/articles", () => {
     return request(app)
       .get("/api/articles")
       .expect(200)
-      .then((response) => {
-        const { articles } = response.body;
+      .then(({ body: { articles } }) => {
         expect(articles).toHaveLength(13);
-        expect(articles).toBeSortedBy("created_at", { descending: true });
         articles.forEach((article) => {
-          expect(article).toHaveProperty("author");
-          expect(article).toHaveProperty("title");
-          expect(article).toHaveProperty("article_id");
-          expect(article).toHaveProperty("topic");
-          expect(article).toHaveProperty("created_at");
-          expect(article).toHaveProperty("votes");
-          expect(article).toHaveProperty("article_img_url");
-          expect(article).toHaveProperty("comment_count");
           expect(article).not.toHaveProperty("body");
+          expect(article).toMatchObject({
+            article_id: expect.any(Number),
+            title: expect.any(String),
+            topic: expect.any(String),
+            created_at: expect.any(String),
+            votes: expect.any(Number),
+            article_img_url: expect.any(String),
+            comment_count: expect.any(String),
+          });
         });
+      });
+  });
+  test("GET 200: should respond with an array of articles sorted by date", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        expect(articles).toBeSortedBy("created_at", { descending: true });
       });
   });
 });
@@ -126,12 +132,14 @@ describe("/api/articles/:article_id/comments", () => {
       .then(({ body: { comments } }) => {
         expect(comments.length > 0).toBe(true);
         comments.forEach((comment) => {
-          expect(comment.article_id).toBe(1);
-          expect(comment).toHaveProperty("comment_id");
-          expect(comment).toHaveProperty("votes");
-          expect(comment).toHaveProperty("created_at");
-          expect(comment).toHaveProperty("author");
-          expect(comment).toHaveProperty("body");
+          expect(comment).toMatchObject({
+            article_id: 1,
+            comment_id: expect.any(Number),
+            created_at: expect.any(String),
+            author: expect.any(String),
+            body: expect.any(String),
+            votes: expect.any(Number),
+          });
         });
       });
   });
@@ -175,12 +183,14 @@ describe("/api/articles/:article_id/comments", () => {
       .set("Accept", "application/json")
       .expect(201)
       .then(({ body: { comment } }) => {
-        expect(comment.body).toBe("test comments");
-        expect(comment.author).toBe("lurker");
-        expect(comment.article_id).toBe(1);
-        expect(comment).toHaveProperty("comment_id");
-        expect(comment).toHaveProperty("votes");
-        expect(comment).toHaveProperty("created_at");
+        expect(comment).toMatchObject({
+          article_id: 1,
+          comment_id: expect.any(Number),
+          created_at: expect.any(String),
+          author: "lurker",
+          body: "test comments",
+          votes: expect.any(Number),
+        });
       });
   });
   test("POST 404: should respond with appropriate status and msg when requesting non-existent id", () => {
