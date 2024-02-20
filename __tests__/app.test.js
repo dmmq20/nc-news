@@ -200,7 +200,7 @@ describe("/api/articles/:article_id/comments", () => {
       .set("Accept", "application/json")
       .expect(404)
       .then(({ body: { msg } }) => {
-        expect(msg).toBe("Not found");
+        expect(msg).toBe("Article not found");
       });
   });
   test("POST 400: should respond with appropriate status and msg when requesting invalid id", () => {

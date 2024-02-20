@@ -37,7 +37,10 @@ function getArticleCommentsById(req, res, next) {
 function addComment(req, res, next) {
   const { article_id } = req.params;
   const { body, username } = req.body;
-  return insertComment(body, username, article_id)
+  return selectArticleById(article_id)
+    .then(() => {
+      return insertComment(body, username, article_id);
+    })
     .then((comment) => {
       res.status(201).send({ comment });
     })
