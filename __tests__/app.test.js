@@ -122,6 +122,41 @@ describe("/api/articles", () => {
         expect(articles).toBeSortedBy("created_at", { descending: true });
       });
   });
+  test("GET 200: should respond with array of articles filtered by topic if provided", () => {
+    return request(app)
+      .get("/api/articles?topic=cats")
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        expect(articles).toHaveLength(1);
+        articles.forEach((article) => {
+          expect(article).toMatchObject({
+            article_id: expect.any(Number),
+            title: expect.any(String),
+            topic: "cats",
+            created_at: expect.any(String),
+            votes: expect.any(Number),
+            article_img_url: expect.any(String),
+            comment_count: expect.any(String),
+          });
+        });
+      });
+  });
+  test("GET 400: should respond with appropriate status and msg if query is invalid", () => {
+    return request(app)
+      .get("/api/articles?topic=notAValidTopic")
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Topic not found");
+      });
+  });
+  test("GET 200: should respond with empty array if topic is valid but no articles", () => {
+    return request(app)
+      .get("/api/articles?topic=paper")
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        expect(articles).toEqual([]);
+      });
+  });
 });
 
 describe("/api/articles/:article_id/comments", () => {

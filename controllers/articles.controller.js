@@ -5,6 +5,7 @@ const {
   insertComment,
   updateArticle,
 } = require("../models/articles.model");
+const { selectTopicByWord } = require("../models/topics.model");
 
 function getArticleById(req, res, next) {
   const { article_id } = req.params;
@@ -16,8 +17,14 @@ function getArticleById(req, res, next) {
 }
 
 function getAllArticles(req, res, next) {
-  return selectArticles()
-    .then((articles) => {
+  const { topic } = req.query;
+  const promises = [selectArticles(topic)];
+  if (topic) {
+    promises.push(selectTopicByWord(topic));
+  }
+  return Promise.all(promises)
+    .then((result) => {
+      const articles = result[0];
       res.status(200).send({ articles });
     })
     .catch(next);
