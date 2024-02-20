@@ -6,6 +6,7 @@ const {
   getAllArticles,
   getArticleCommentsById,
   addComment,
+  editArticle,
 } = require("./controllers/articles.controller");
 const {
   psqlErrors,
@@ -24,6 +25,8 @@ app.get("/api/articles", getAllArticles);
 app.get("/api/articles/:article_id/comments", getArticleCommentsById);
 
 app.post("/api/articles/:article_id/comments", addComment);
+
+app.patch("/api/articles/:article_id", editArticle);
 
 app.all("*", invalidRoute);
 app.use(psqlErrors);
