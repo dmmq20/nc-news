@@ -18,3 +18,5 @@ If you'd like to run this project you'll need to run the following commands:
 
 5. Seed dbs
    `npm run seed`
+
+To run this successfully you will need atleast Node v20.11.0 and PostgresQL 14.10
