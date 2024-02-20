@@ -95,6 +95,19 @@
       "exampleResponse": {
         "status": 204
       }
+    },
+    "GET /api/users": {
+      "description": "serves an array of all users",
+      "queries": [],
+      "exampleResponse": {
+        "users": [
+          {
+            "username": "exampleUsername",
+            "name": "exampleName",
+            "avatar_url": "exampleAvatarUrl"
+          }
+        ]
+      }
     }
   }
 }
