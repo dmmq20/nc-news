@@ -29,6 +29,8 @@ app.post("/api/articles/:article_id/comments", addComment);
 
 app.patch("/api/articles/:article_id", editArticle);
 
+app.delete("/api/comments/:comment_id", removeComment);
+
 app.all("*", invalidRoute);
 app.use(psqlErrors);
 app.use(customErrors);

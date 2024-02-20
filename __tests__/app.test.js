@@ -291,3 +291,25 @@ describe("/api/articles/:article_id/comments", () => {
       });
   });
 });
+
+describe("/api/comments", () => {
+  test("DELETE 204: should respond with appropriate status on successful delete", () => {
+    return request(app).delete("/api/comments/1").expect(204);
+  });
+  test("DELETE 400: should respond with appropriate status and msg when trying to delete comment with invalid id", () => {
+    return request(app)
+      .delete("/api/comments/notAValidId")
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Bad request");
+      });
+  });
+  test("DELETE 404: should respond with appropriate status and msg when trying to delete comment with non-existent id", () => {
+    return request(app)
+      .delete("/api/comments/99999")
+      .expect(404)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Comment not found");
+      });
+  });
+});
