@@ -47,6 +47,12 @@ Make sure you have the following installed on your system:
 
 ### Usage
 
+To run all tests, run:
+
+```bash
+npm test
+```
+
 To start the server, run:
 
 ```bash
@@ -54,9 +60,3 @@ npm start
 ```
 
 The server will be running on http://localhost:9090 by default.
-
-To run all tests, run:
-
-```bash
-npm test
-```
