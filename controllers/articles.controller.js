@@ -5,7 +5,6 @@ const {
   insertComment,
   updateArticle,
 } = require("../models/articles.model");
-const { selectTopicBySlug } = require("../models/topics.model");
 const { checkExists } = require("./utils");
 
 function getArticleById(req, res, next) {
@@ -21,7 +20,7 @@ function getAllArticles(req, res, next) {
   const { topic } = req.query;
   const promises = [selectArticles(topic)];
   if (topic) {
-    promises.push(selectTopicBySlug(topic));
+    promises.push(checkExists("topics", "slug", topic));
   }
   return Promise.all(promises)
     .then(([articles, _]) => {

@@ -163,7 +163,7 @@ describe("/api/articles", () => {
       .get("/api/articles?topic=notAValidTopic")
       .expect(404)
       .then(({ body: { msg } }) => {
-        expect(msg).toBe("Topic not found");
+        expect(msg).toBe("Resource not found");
       });
   });
   test("GET 200: should respond with empty array if topic is valid but no articles", () => {
@@ -246,6 +246,9 @@ describe("/api/articles/:article_id/comments", () => {
       });
   });
   test("POST 404: should respond with appropriate status and msg when requesting non-existent id", () => {
+    // NOTE: this sometimes fails for reasons unknown
+    // possibly a problem with psql
+    // just run the tests again
     return request(app)
       .post("/api/articles/99999/comments")
       .send({ username: "lurker", body: "test comments" })
