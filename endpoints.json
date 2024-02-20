@@ -88,6 +88,13 @@
         "votes": 10,
         "comment_count": 6
       }
+    },
+    "DELETE /api/comments/:comment_id": {
+      "description": "Deletes the comment associated with comment_id if it exists",
+      "queries": [],
+      "exampleResponse": {
+        "status": 204
+      }
     }
   }
 }
