@@ -4,7 +4,7 @@ function selectTopics() {
   return db.query(`SELECT * FROM topics;`).then(({ rows }) => rows);
 }
 
-function selectTopicByWord(topic) {
+function selectTopicBySlug(topic) {
   return db
     .query(`SELECT * FROM topics WHERE slug = $1`, [topic])
     .then(({ rows }) => {
@@ -15,4 +15,4 @@ function selectTopicByWord(topic) {
     });
 }
 
-module.exports = { selectTopics, selectTopicByWord };
+module.exports = { selectTopics, selectTopicBySlug };

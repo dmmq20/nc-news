@@ -5,7 +5,8 @@ const {
   insertComment,
   updateArticle,
 } = require("../models/articles.model");
-const { selectTopicByWord } = require("../models/topics.model");
+const { selectTopicBySlug } = require("../models/topics.model");
+const { checkExists } = require("./utils");
 
 function getArticleById(req, res, next) {
   const { article_id } = req.params;
@@ -20,11 +21,10 @@ function getAllArticles(req, res, next) {
   const { topic } = req.query;
   const promises = [selectArticles(topic)];
   if (topic) {
-    promises.push(selectTopicByWord(topic));
+    promises.push(selectTopicBySlug(topic));
   }
   return Promise.all(promises)
-    .then((result) => {
-      const articles = result[0];
+    .then(([articles, _]) => {
       res.status(200).send({ articles });
     })
     .catch(next);
@@ -33,7 +33,7 @@ function getAllArticles(req, res, next) {
 function getArticleCommentsById(req, res, next) {
   const { article_id } = req.params;
   return Promise.all([
-    selectArticleById(article_id),
+    checkExists("articles", "article_id", article_id),
     selectArticleCommentsById(article_id),
   ])
     .then(([_, comments]) => {
@@ -46,7 +46,7 @@ function addComment(req, res, next) {
   const { article_id } = req.params;
   const { body, username } = req.body;
   return Promise.all([
-    selectArticleById(article_id),
+    checkExists("articles", "article_id", article_id),
     insertComment(body, username, article_id),
   ])
     .then(([_, comment]) => {
@@ -59,7 +59,7 @@ function editArticle(req, res, next) {
   const { article_id } = req.params;
   const { inc_votes } = req.body;
   return Promise.all([
-    selectArticleById(article_id),
+    checkExists("articles", "article_id", article_id),
     updateArticle(article_id, inc_votes),
   ])
     .then(([_, article]) => {

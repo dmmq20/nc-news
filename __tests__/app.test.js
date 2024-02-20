@@ -209,7 +209,7 @@ describe("/api/articles/:article_id/comments", () => {
       .get("/api/articles/99999/comments")
       .expect(404)
       .then(({ body: { msg } }) => {
-        expect(msg).toBe("Article not found");
+        expect(msg).toBe("Resource not found");
       });
   });
   test("GET 400: should respond with appropriate status and msg if requesting invalid id", () => {
@@ -252,7 +252,7 @@ describe("/api/articles/:article_id/comments", () => {
       .set("Accept", "application/json")
       .expect(404)
       .then(({ body: { msg } }) => {
-        expect(msg).toBe("Article not found");
+        expect(msg).toBe("Resource not found");
       });
   });
   test("POST 400: should respond with appropriate status and msg when requesting invalid id", () => {
@@ -317,7 +317,7 @@ describe("/api/articles/:article_id/comments", () => {
       .set("Accept", "application/json")
       .expect(404)
       .then(({ body: { msg } }) => {
-        expect(msg).toBe("Article not found");
+        expect(msg).toBe("Resource not found");
       });
   });
   test("PATCH 400: should respond with appropriate status and msg when trying to update invalid article id", () => {
@@ -381,7 +381,7 @@ describe("/api/comments", () => {
       .delete("/api/comments/99999")
       .expect(404)
       .then(({ body: { msg } }) => {
-        expect(msg).toBe("Comment not found");
+        expect(msg).toBe("Resource not found");
       });
   });
 });
