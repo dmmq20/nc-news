@@ -32,11 +32,11 @@ function getAllArticles(req, res, next) {
 
 function getArticleCommentsById(req, res, next) {
   const { article_id } = req.params;
-  return selectArticleById(article_id)
-    .then(() => {
-      return selectArticleCommentsById(article_id);
-    })
-    .then((comments) => {
+  return Promise.all([
+    selectArticleById(article_id),
+    selectArticleCommentsById(article_id),
+  ])
+    .then(([_, comments]) => {
       res.status(200).send({ comments });
     })
     .catch(next);
@@ -45,11 +45,11 @@ function getArticleCommentsById(req, res, next) {
 function addComment(req, res, next) {
   const { article_id } = req.params;
   const { body, username } = req.body;
-  return selectArticleById(article_id)
-    .then(() => {
-      return insertComment(body, username, article_id);
-    })
-    .then((comment) => {
+  return Promise.all([
+    selectArticleById(article_id),
+    insertComment(body, username, article_id),
+  ])
+    .then(([_, comment]) => {
       res.status(201).send({ comment });
     })
     .catch(next);
@@ -58,11 +58,11 @@ function addComment(req, res, next) {
 function editArticle(req, res, next) {
   const { article_id } = req.params;
   const { inc_votes } = req.body;
-  return selectArticleById(article_id)
-    .then(() => {
-      return updateArticle(article_id, inc_votes);
-    })
-    .then((article) => {
+  return Promise.all([
+    selectArticleById(article_id),
+    updateArticle(article_id, inc_votes),
+  ])
+    .then(([_, article]) => {
       res.status(200).send({ article });
     })
     .catch(next);

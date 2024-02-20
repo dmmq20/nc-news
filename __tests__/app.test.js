@@ -325,6 +325,26 @@ describe("/api/articles/:article_id/comments", () => {
         expect(msg).toBe("Bad request");
       });
   });
+  test("PATCH 400: should respond with appropriate status and msg when trying to update article with empty object", () => {
+    return request(app)
+      .patch("/api/articles/1")
+      .send({})
+      .set("Accept", "application/json")
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Bad request");
+      });
+  });
+  test("PATCH 400: should respond with appropriate status and msg when trying to update article with incorrect keys", () => {
+    return request(app)
+      .patch("/api/articles/1")
+      .send({ wrong: "i am a wrong key" })
+      .set("Accept", "application/json")
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Bad request");
+      });
+  });
 });
 
 describe("/api/comments", () => {
