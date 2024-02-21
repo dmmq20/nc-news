@@ -15,7 +15,6 @@ describe("checkExists", () => {
     });
   });
   test("should return true if resource exists", async () => {
-    const output = await checkExists("articles", "article_id", 1);
-    expect(output).toBe(true);
+    await expect(checkExists("articles", "article_id", 2)).resolves.toBe(true);
   });
 });

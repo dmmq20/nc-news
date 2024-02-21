@@ -8,7 +8,7 @@ const checkExists = async (table, column, value) => {
   if (dbOutput.rows.length === 0) {
     return Promise.reject({ status: 404, msg: "Resource not found" });
   }
-  return true;
+  return Promise.resolve(true);
 };
 
 module.exports = { checkExists };
