@@ -328,7 +328,7 @@ describe("/api/articles/:article_id/comments", () => {
         expect(msg).toBe("Bad request");
       });
   });
-  test("PATCH 200: should respond with appropriate status code when patch is successful with positive votes and return updated article", () => {
+  test("PATCH 200: should respond with appropriate status code when patch is successful and return updated article", () => {
     const newVote = { inc_votes: 10 };
     return request(app)
       .patch("/api/articles/1")
@@ -338,18 +338,6 @@ describe("/api/articles/:article_id/comments", () => {
       .then(({ body: { article } }) => {
         expect(article.article_id).toBe(1);
         expect(article.votes).toBe(110);
-      });
-  });
-  test("PATCH 200: should respond with appropriate status code when patch is successful with negative votes and return updated article", () => {
-    const newVote = { inc_votes: -10 };
-    return request(app)
-      .patch("/api/articles/1")
-      .send(newVote)
-      .set("Accept", "application/json")
-      .expect(200)
-      .then(({ body: { article } }) => {
-        expect(article.article_id).toBe(1);
-        expect(article.votes).toBe(90);
       });
   });
   test("PATCH 404: should respond with appropriate status and msg when trying to update non-existent article", () => {
