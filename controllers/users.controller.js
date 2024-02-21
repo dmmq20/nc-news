@@ -1,4 +1,7 @@
-const { selectAllUsers } = require("../models/users.model");
+const {
+  selectAllUsers,
+  selectUserByUsername,
+} = require("../models/users.model");
 
 function getAllUsers(req, res, next) {
   return selectAllUsers()
@@ -6,4 +9,8 @@ function getAllUsers(req, res, next) {
     .catch(next);
 }
 
-module.exports = { getAllUsers };
+function getUserByUsername() {
+  return selectUserByUsername(username);
+}
+
+module.exports = { getAllUsers, getUserByUsername };
