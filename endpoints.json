@@ -108,6 +108,19 @@
           }
         ]
       }
+    },
+    "GET /api/users/:username": {
+      "description": "responds with a user object if username exists",
+      "queries": [],
+      "exampleResponse": {
+        "users": [
+          {
+            "username": "exampleUsername",
+            "name": "exampleName",
+            "avatar_url": "exampleAvatarUrl"
+          }
+        ]
+      }
     }
   }
 }
