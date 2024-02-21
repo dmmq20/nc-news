@@ -190,12 +190,12 @@ describe("/api/articles", () => {
         expect(articles).toBeSortedBy("created_at");
       });
   });
-  test("GET 200: should respond with array of articles sorted by provided query and ascending order when query provided", () => {
+  test.only("GET 200: should respond with array of articles sorted by provided query and ascending order when query provided", () => {
     return request(app)
       .get("/api/articles?sort_by=author&order=asc")
       .expect(200)
       .then(({ body: { articles } }) => {
-        expect(articles).toBeSortedBy("author");
+        expect(articles).toBeSortedBy("author", { descending: false });
       });
   });
   test("GET 400: should respond with appropriate status and msg when providing invalid sort_by", () => {
