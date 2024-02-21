@@ -458,3 +458,62 @@ describe("/api/users/:username", () => {
       });
   });
 });
+
+describe("/api/comments/:comment_id", () => {
+  test("PATCH 200: should return correct status and updated message", () => {
+    return request(app)
+      .patch("/api/comments/1")
+      .send({ inc_votes: 10 })
+      .set("Accept", "application/json")
+      .expect(200)
+      .then(({ body: { comment } }) => {
+        expect(comment).toMatchObject({
+          comment_id: 1,
+          body: "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
+          votes: 26,
+          author: "butter_bridge",
+          created_at: "2020-04-06T12:17:00.000Z",
+        });
+      });
+  });
+  test("PATCH 400: should respond with appropriate status and error when requesting invalid id", () => {
+    return request(app)
+      .patch("/api/comments/notAValidId")
+      .send({ inc_votes: 10 })
+      .set("Accept", "application/json")
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Bad request");
+      });
+  });
+  test("PATCH 400: should respond with appropriate status and error when request body has invalid key", () => {
+    return request(app)
+      .patch("/api/comments/notAValidId")
+      .send({ notValidKey: 10 })
+      .set("Accept", "application/json")
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Bad request");
+      });
+  });
+  test("PATCH 400: should respond with appropriate status and error when request body is empty", () => {
+    return request(app)
+      .patch("/api/comments/notAValidId")
+      .send({})
+      .set("Accept", "application/json")
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Bad request");
+      });
+  });
+  test("PATCH 404: should respond with appropriate status and error when requesting non-existent id", () => {
+    return request(app)
+      .patch("/api/comments/99999")
+      .send({ inc_votes: 10 })
+      .set("Accept", "application/json")
+      .expect(404)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Resource not found");
+      });
+  });
+});

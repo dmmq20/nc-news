@@ -25,4 +25,18 @@ function deleteComment(id) {
   );
 }
 
-module.exports = { deleteComment, selectCommentById };
+function updateComment(id, inc_votes) {
+  return db
+    .query(
+      `
+    UPDATE comments
+    SET votes = votes + $1
+    WHERE comment_id = $2
+    RETURNING *;
+    `,
+      [inc_votes, id]
+    )
+    .then(({ rows }) => rows[0]);
+}
+
+module.exports = { deleteComment, selectCommentById, updateComment };
