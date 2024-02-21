@@ -174,6 +174,46 @@ describe("/api/articles", () => {
         expect(articles).toEqual([]);
       });
   });
+  test("GET 200: should respond with array of articles sorted by provided query in descending order by default", () => {
+    return request(app)
+      .get("/api/articles?sort_by=author")
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        expect(articles).toBeSortedBy("author", { descending: true });
+      });
+  });
+  test("GET 200: should respond with array of articles ordered by provided query", () => {
+    return request(app)
+      .get("/api/articles?order=asc")
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        expect(articles).toBeSortedBy("created_at");
+      });
+  });
+  test("GET 200: should respond with array of articles sorted by provided query and ascending order when query provided", () => {
+    return request(app)
+      .get("/api/articles?sort_by=author&order=asc")
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        expect(articles).toBeSortedBy("author");
+      });
+  });
+  test("GET 400: should respond with appropriate status and msg when providing invalid sort_by", () => {
+    return request(app)
+      .get("/api/articles?sort_by=notValid")
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Bad request");
+      });
+  });
+  test("GET 400: should respond with appropriate status and msg when providing invalid order", () => {
+    return request(app)
+      .get("/api/articles?order=notValid")
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Bad request");
+      });
+  });
 });
 
 describe("/api/articles/:article_id/comments", () => {
