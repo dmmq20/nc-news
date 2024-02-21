@@ -190,7 +190,7 @@ describe("/api/articles", () => {
         expect(articles).toBeSortedBy("created_at");
       });
   });
-  test.only("GET 200: should respond with array of articles sorted by provided query and ascending order when query provided", () => {
+  test("GET 200: should respond with array of articles sorted by provided query and ascending order when query provided", () => {
     return request(app)
       .get("/api/articles?sort_by=author&order=asc")
       .expect(200)
