@@ -63,6 +63,12 @@
       }
     }
   },
+  "DELETE /api/articles/:article_id": {
+    "description": "deletes the resource with article_id if it exists",
+    "exampleResponse": {
+      "status": 200
+    }
+  },
   "GET /api/articles/:article_id/comments": {
     "description": "serves an array of comments",
     "queries": [],

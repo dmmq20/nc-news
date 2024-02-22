@@ -5,6 +5,7 @@ const {
   insertComment,
   updateArticle,
   insertArticle,
+  deleteArticle,
 } = require("../models/articles.model");
 const { checkExists } = require("./utils");
 
@@ -79,6 +80,18 @@ function addArticle(req, res, next) {
     .catch(next);
 }
 
+function removeArticle(req, res, next) {
+  const { article_id } = req.params;
+  return Promise.all([
+    checkExists("articles", "article_id", article_id),
+    deleteArticle(article_id),
+  ])
+    .then(() => {
+      res.status(200).send();
+    })
+    .catch(next);
+}
+
 module.exports = {
   getArticleById,
   getAllArticles,
@@ -86,4 +99,5 @@ module.exports = {
   addComment,
   editArticle,
   addArticle,
+  removeArticle,
 };

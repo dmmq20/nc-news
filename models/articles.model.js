@@ -138,6 +138,24 @@ function insertArticle(article) {
     .then(({ rows }) => rows[0]);
 }
 
+function deleteArticle(id) {
+  return db
+    .query(
+      `
+      DELETE FROM comments WHERE article_id = $1;
+      `,
+      [id]
+    )
+    .then(() => {
+      return db.query(
+        `
+        DELETE FROM articles WHERE article_id = $1;
+        `,
+        [id]
+      );
+    });
+}
+
 module.exports = {
   selectArticleById,
   selectArticles,
@@ -145,4 +163,5 @@ module.exports = {
   insertComment,
   updateArticle,
   insertArticle,
+  deleteArticle,
 };

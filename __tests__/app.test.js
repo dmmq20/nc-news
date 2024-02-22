@@ -173,6 +173,25 @@ describe("/api/articles/:article_id", () => {
         expect(msg).toBe("Bad request");
       });
   });
+  test("DELETE 200: should respond with approriate status and msg on successful delete", () => {
+    return request(app).delete("/api/articles/1").expect(200);
+  });
+  test("DELETE 400: should respond with appropriate status and msg if id is invalid", () => {
+    return request(app)
+      .delete("/api/articles/notValidId")
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Bad request");
+      });
+  });
+  test("DELETE 404: should respond with appropriate status and msg if id is non-existent", () => {
+    return request(app)
+      .delete("/api/articles/999")
+      .expect(404)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Resource not found");
+      });
+  });
 });
 
 describe("/api/articles", () => {
