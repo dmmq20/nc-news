@@ -19,20 +19,32 @@ function selectArticleById(id) {
     });
 }
 
-function selectArticles(topic, sort_by = "created_at", order = "DESC") {
+function selectArticles(
+  topic,
+  sort_by = "created_at",
+  order = "DESC",
+  p = 1,
+  limit = 10
+) {
   let query = `
       SELECT a.author, title, a.article_id, a.topic, 
           a.created_at, a.votes, a.article_img_url, 
           COUNT(comment_id) AS comment_count 
       FROM articles AS a
       LEFT JOIN comments ON a.article_id = comments.article_id`;
+  let queryWithTotalCount = `
+      SELECT CAST(COUNT(*) AS INTEGER) AS total_count 
+      FROM articles AS a`;
   const queryVals = [];
   if (topic) {
     query += ` WHERE a.topic = $1`;
+    queryWithTotalCount += ` WHERE a.topic = $1`;
     queryVals.push(topic);
   }
   query += ` GROUP BY a.article_id`;
   if (
+    !isNaN(p) &&
+    !isNaN(limit) &&
     [
       "title",
       "created_at",
@@ -43,13 +55,18 @@ function selectArticles(topic, sort_by = "created_at", order = "DESC") {
     ].includes(sort_by) &&
     ["ASC", "DESC"].includes(order.toUpperCase())
   ) {
-    query += ` ORDER BY ${sort_by} ${order};`;
+    query += ` ORDER BY ${sort_by} ${order}`;
+    query += ` LIMIT ${limit} OFFSET ${(p - 1) * limit};`;
   } else {
     return Promise.reject({ status: 400, msg: "Bad request" });
   }
 
-  return db.query(query, queryVals).then(({ rows }) => {
-    return rows;
+  return Promise.all([
+    db.query(queryWithTotalCount, queryVals),
+    db.query(query, queryVals),
+  ]).then(([count, { rows }]) => {
+    const total_count = count.rows[0];
+    return { ...total_count, articles: rows };
   });
 }
 

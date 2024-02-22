@@ -181,7 +181,7 @@ describe("/api/articles", () => {
       .get("/api/articles")
       .expect(200)
       .then(({ body: { articles } }) => {
-        expect(articles).toHaveLength(13);
+        expect(articles.length > 0).toBe(true);
         articles.forEach((article) => {
           expect(article).not.toHaveProperty("body");
           expect(article).toMatchObject({
@@ -385,6 +385,55 @@ describe("/api/articles", () => {
       .post("/api/articles")
       .send(article)
       .set("Accept", "application/json")
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Bad request");
+      });
+  });
+  test("GET 200: should respond with correct page of results if specified with default limit of 10", () => {
+    return request(app)
+      .get("/api/articles?p=1")
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        expect(articles).toHaveLength(10);
+      });
+  });
+  test("GET 200: should respond with correct number of articles if limit is specified", () => {
+    return request(app)
+      .get("/api/articles?limit=5&p=1")
+      .expect(200)
+      .then(({ body: { articles } }) => {
+        expect(articles).toHaveLength(5);
+      });
+  });
+  test("GET 200: should respond with total_count property containing correct number of articles before any limit is applied", () => {
+    return request(app)
+      .get("/api/articles?limit=5&p=1")
+      .expect(200)
+      .then(({ body: { articles, total_count } }) => {
+        expect(articles).toHaveLength(5);
+        expect(total_count).toBe(13);
+      });
+  });
+  test("GET 200: should respond with correct total_count when filter is applied", () => {
+    return request(app)
+      .get("/api/articles?topic=cats&limit=5&p=1")
+      .expect(200)
+      .then(({ body: { total_count } }) => {
+        expect(total_count).toBe(1);
+      });
+  });
+  test("GET 400: should respond with appropriate status and msg if page is invalid", () => {
+    return request(app)
+      .get("/api/articles?topic=cats&p=notValid&order=asc")
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Bad request");
+      });
+  });
+  test("GET 400: should respond with appropriate status and msg if limit is invalid", () => {
+    return request(app)
+      .get("/api/articles?topic=cats&limit=notValid&order=asc")
       .expect(400)
       .then(({ body: { msg } }) => {
         expect(msg).toBe("Bad request");
