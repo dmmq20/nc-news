@@ -4,6 +4,7 @@ const {
   selectArticleCommentsById,
   insertComment,
   updateArticle,
+  insertArticle,
 } = require("../models/articles.model");
 const { checkExists } = require("./utils");
 
@@ -67,10 +68,22 @@ function editArticle(req, res, next) {
     .catch(next);
 }
 
+function addArticle(req, res, next) {
+  return insertArticle(req.body)
+    .then(({ article_id }) => {
+      return selectArticleById(article_id);
+    })
+    .then((article) => {
+      res.status(201).send({ article });
+    })
+    .catch(next);
+}
+
 module.exports = {
   getArticleById,
   getAllArticles,
   getArticleCommentsById,
   addComment,
   editArticle,
+  addArticle,
 };

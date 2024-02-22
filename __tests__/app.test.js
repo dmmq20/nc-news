@@ -108,6 +108,71 @@ describe("/api/articles/:article_id", () => {
         expect(article.comment_count).toBe(0);
       });
   });
+  test("PATCH 200: should respond with appropriate status code when patch is successful and return updated article", () => {
+    const newVote = { inc_votes: 10 };
+    return request(app)
+      .patch("/api/articles/1")
+      .send(newVote)
+      .set("Accept", "application/json")
+      .expect(200)
+      .then(({ body: { article } }) => {
+        expect(article.article_id).toBe(1);
+        expect(article.votes).toBe(110);
+      });
+  });
+  test("PATCH 404: should respond with appropriate status and msg when trying to update non-existent article", () => {
+    const newVote = { inc_votes: 10 };
+    return request(app)
+      .patch("/api/articles/99999")
+      .send(newVote)
+      .set("Accept", "application/json")
+      .expect(404)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Resource not found");
+      });
+  });
+  test("PATCH 400: should respond with appropriate status and msg when trying to update invalid article id", () => {
+    const newVote = { inc_votes: 10 };
+    return request(app)
+      .patch("/api/articles/notAValidId")
+      .send(newVote)
+      .set("Accept", "application/json")
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Bad request");
+      });
+  });
+  test("PATCH 400: should respond with appropriate status and msg when trying to update article with invalid inc_vote", () => {
+    const newVote = { inc_votes: "invalid votes" };
+    return request(app)
+      .patch("/api/articles/1")
+      .send(newVote)
+      .set("Accept", "application/json")
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Bad request");
+      });
+  });
+  test("PATCH 400: should respond with appropriate status and msg when trying to update article with empty object", () => {
+    return request(app)
+      .patch("/api/articles/1")
+      .send({})
+      .set("Accept", "application/json")
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Bad request");
+      });
+  });
+  test("PATCH 400: should respond with appropriate status and msg when trying to update article with incorrect keys", () => {
+    return request(app)
+      .patch("/api/articles/1")
+      .send({ wrong: "i am a wrong key" })
+      .set("Accept", "application/json")
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Bad request");
+      });
+  });
 });
 
 describe("/api/articles", () => {
@@ -214,65 +279,111 @@ describe("/api/articles", () => {
         expect(msg).toBe("Bad request");
       });
   });
-  test("PATCH 200: should respond with appropriate status code when patch is successful and return updated article", () => {
-    const newVote = { inc_votes: 10 };
+  test("POST 201: should respond with appropriate status and inserted article", () => {
+    const article = {
+      author: "lurker",
+      title: "test title",
+      body: "test body",
+      topic: "mitch",
+      article_img_url: "testImgUrl.com",
+    };
     return request(app)
-      .patch("/api/articles/1")
-      .send(newVote)
+      .post("/api/articles")
+      .send(article)
       .set("Accept", "application/json")
-      .expect(200)
+      .expect(201)
       .then(({ body: { article } }) => {
-        expect(article.article_id).toBe(1);
-        expect(article.votes).toBe(110);
+        expect(article).toMatchObject({
+          article_id: expect.any(Number),
+          created_at: expect.any(String),
+          votes: 0,
+          author: "lurker",
+          title: "test title",
+          body: "test body",
+          topic: "mitch",
+          article_img_url: "testImgUrl.com",
+        });
       });
   });
-  test("PATCH 404: should respond with appropriate status and msg when trying to update non-existent article", () => {
-    const newVote = { inc_votes: 10 };
+  test("POST 201: should respond with appropriate status and inserted article with default article_img_url", () => {
+    const article = {
+      author: "lurker",
+      title: "test title",
+      body: "test body",
+      topic: "mitch",
+    };
     return request(app)
-      .patch("/api/articles/99999")
-      .send(newVote)
+      .post("/api/articles")
+      .send(article)
+      .set("Accept", "application/json")
+      .expect(201)
+      .then(({ body: { article } }) => {
+        expect(article).toMatchObject({
+          article_id: expect.any(Number),
+          created_at: expect.any(String),
+          comment_count: 0,
+          votes: 0,
+          author: "lurker",
+          title: "test title",
+          body: "test body",
+          topic: "mitch",
+          article_img_url:
+            "https://images.pexels.com/photos/97050/pexels-photo-97050.jpeg?w=700&h=700",
+        });
+      });
+  });
+  test("POST 404: should respond with appropriate status and msg if author not in users table", () => {
+    const article = {
+      author: "notInUsers",
+      title: "test title",
+      body: "test body",
+      topic: "mitch",
+    };
+    return request(app)
+      .post("/api/articles")
+      .send(article)
       .set("Accept", "application/json")
       .expect(404)
       .then(({ body: { msg } }) => {
-        expect(msg).toBe("Resource not found");
+        expect(msg).toBe("Not found");
       });
   });
-  test("PATCH 400: should respond with appropriate status and msg when trying to update invalid article id", () => {
-    const newVote = { inc_votes: 10 };
+  test("POST 400: should respond with appropriate status and msg if request body missing properties", () => {
+    const article = {
+      author: "notInUsers",
+      body: "test body",
+      topic: "mitch",
+    };
     return request(app)
-      .patch("/api/articles/notAValidId")
-      .send(newVote)
+      .post("/api/articles")
+      .send(article)
       .set("Accept", "application/json")
       .expect(400)
       .then(({ body: { msg } }) => {
         expect(msg).toBe("Bad request");
       });
   });
-  test("PATCH 400: should respond with appropriate status and msg when trying to update article with invalid inc_vote", () => {
-    const newVote = { inc_votes: "invalid votes" };
+  test("POST 404: should respond with appropriate status and msg if topic not in topics table", () => {
+    const article = {
+      author: "notInUsers",
+      title: "test title",
+      body: "test body",
+      topic: "notInTopics",
+    };
     return request(app)
-      .patch("/api/articles/1")
-      .send(newVote)
+      .post("/api/articles")
+      .send(article)
       .set("Accept", "application/json")
-      .expect(400)
+      .expect(404)
       .then(({ body: { msg } }) => {
-        expect(msg).toBe("Bad request");
+        expect(msg).toBe("Not found");
       });
   });
-  test("PATCH 400: should respond with appropriate status and msg when trying to update article with empty object", () => {
+  test("POST 400: should respond with appropriate status and msg if request body is empty", () => {
+    const article = {};
     return request(app)
-      .patch("/api/articles/1")
-      .send({})
-      .set("Accept", "application/json")
-      .expect(400)
-      .then(({ body: { msg } }) => {
-        expect(msg).toBe("Bad request");
-      });
-  });
-  test("PATCH 400: should respond with appropriate status and msg when trying to update article with incorrect keys", () => {
-    return request(app)
-      .patch("/api/articles/1")
-      .send({ wrong: "i am a wrong key" })
+      .post("/api/articles")
+      .send(article)
       .set("Accept", "application/json")
       .expect(400)
       .then(({ body: { msg } }) => {

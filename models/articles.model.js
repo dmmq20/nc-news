@@ -51,10 +51,10 @@ function selectArticleCommentsById(id) {
   return db
     .query(
       `
-    SELECT * FROM comments
-    WHERE article_id = $1
-    ORDER BY created_at DESC;
-    `,
+      SELECT * FROM comments
+      WHERE article_id = $1
+      ORDER BY created_at DESC;
+      `,
       [id]
     )
     .then(({ rows }) => rows);
@@ -64,10 +64,10 @@ function insertComment(body, author, id) {
   return db
     .query(
       `
-    INSERT INTO comments (body, author, article_id) 
-    VALUES ($1, $2, $3)
-    RETURNING *;
-    `,
+      INSERT INTO comments (body, author, article_id) 
+      VALUES ($1, $2, $3)
+      RETURNING *;
+      `,
       [body, author, id]
     )
     .then(({ rows }) => {
@@ -79,16 +79,40 @@ function updateArticle(id, inc_votes) {
   return db
     .query(
       `
-  UPDATE articles
-  SET votes = votes + $1
-  WHERE article_id = $2
-  RETURNING *;
-  `,
+      UPDATE articles
+      SET votes = votes + $1
+      WHERE article_id = $2
+      RETURNING *;
+      `,
       [inc_votes, id]
     )
     .then(({ rows }) => {
       return rows[0];
     });
+}
+
+function insertArticle(article) {
+  const votes = 0;
+  const fmtArticle = [
+    article.title,
+    article.topic,
+    article.author,
+    article.body,
+    votes,
+    article.article_img_url ||
+      "https://images.pexels.com/photos/97050/pexels-photo-97050.jpeg?w=700&h=700",
+  ];
+  return db
+    .query(
+      `
+      INSERT INTO articles
+        (title, topic, author, body, votes, article_img_url)
+      VALUES ($1, $2, $3, $4, $5, $6)
+      RETURNING *;
+      `,
+      fmtArticle
+    )
+    .then(({ rows }) => rows[0]);
 }
 
 module.exports = {
@@ -97,4 +121,5 @@ module.exports = {
   selectArticleCommentsById,
   insertComment,
   updateArticle,
+  insertArticle,
 };
