@@ -33,15 +33,21 @@ function selectArticles(topic, sort_by = "created_at", order = "DESC") {
   }
   query += ` GROUP BY a.article_id`;
   if (
-    ["title", "created_at", "author", "article_id", "votes"].includes(
-      sort_by
-    ) &&
+    [
+      "title",
+      "created_at",
+      "author",
+      "article_id",
+      "votes",
+      "comment_count",
+    ].includes(sort_by) &&
     ["ASC", "DESC"].includes(order.toUpperCase())
   ) {
     query += ` ORDER BY ${sort_by} ${order};`;
   } else {
     return Promise.reject({ status: 400, msg: "Bad request" });
   }
+
   return db.query(query, queryVals).then(({ rows }) => {
     return rows;
   });
