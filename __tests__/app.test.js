@@ -34,6 +34,49 @@ describe("/api/topics", () => {
         expect(msg).toBe("Invalid url");
       });
   });
+  test("POST 201: should respond with appropriate status and inserted topic", () => {
+    return request(app)
+      .post("/api/topics")
+      .send({ slug: "food", description: "yummy things" })
+      .set("Accept", "application/json")
+      .expect(201)
+      .then(({ body: { topic } }) => {
+        expect(topic).toMatchObject({
+          slug: "food",
+          description: "yummy things",
+        });
+      });
+  });
+  test("POST 400: should respond with appropriate status and msg when request body is missing properties", () => {
+    return request(app)
+      .post("/api/topics")
+      .send({ slug: "food" })
+      .set("Accept", "application/json")
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Bad request");
+      });
+  });
+  test("POST 400: should respond with appropriate status and msg when request body is missing properties", () => {
+    return request(app)
+      .post("/api/topics")
+      .send({ description: "yummy things" })
+      .set("Accept", "application/json")
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Bad request");
+      });
+  });
+  test("POST 400: should respond with appropriate status and msg when request body empty", () => {
+    return request(app)
+      .post("/api/topics")
+      .send({})
+      .set("Accept", "application/json")
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Bad request");
+      });
+  });
 });
 
 describe("/api", () => {
