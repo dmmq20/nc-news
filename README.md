@@ -53,7 +53,7 @@ To run all tests:
 npm test
 ```
 
-To start the server, run:
+To start the server:
 
 ```bash
 npm start
