@@ -573,11 +573,10 @@ describe("/api/articles/:article_id/comments", () => {
       });
   });
   test("POST 404: should respond with appropriate status and msg when requesting non-existent id", () => {
-    // NOTE: this sometimes fails for reasons unknown
-    // possibly a problem with psql
+    // NOTE: this sometimes fails and is likely a race condition
     // just run the tests again
     return request(app)
-      .post("/api/articles/99999/comments")
+      .post("/api/articles/999/comments")
       .send({ username: "lurker", body: "test comments" })
       .set("Accept", "application/json")
       .expect(404)
@@ -610,6 +609,48 @@ describe("/api/articles/:article_id/comments", () => {
       .post("/api/articles/1/comments")
       .send({ username: "lurker" })
       .set("Accept", "application/json")
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Bad request");
+      });
+  });
+  test("GET 200: should respond with correct page with default limit of 10", () => {
+    return request(app)
+      .get("/api/articles/1/comments?p=1")
+      .expect(200)
+      .then(({ body: { comments } }) => {
+        expect(comments).toHaveLength(10);
+        comments.forEach((comment) => {
+          expect(comment).toMatchObject({
+            article_id: 1,
+            comment_id: expect.any(Number),
+            created_at: expect.any(String),
+            author: expect.any(String),
+            body: expect.any(String),
+            votes: expect.any(Number),
+          });
+        });
+      });
+  });
+  test("GET 200: should respond with correct page and limit", () => {
+    return request(app)
+      .get("/api/articles/1/comments?p=2&limit=3")
+      .expect(200)
+      .then(({ body: { comments } }) => {
+        expect(comments).toHaveLength(3);
+      });
+  });
+  test("GET 400: should respond with appropriate status and msg when p query is invalid", () => {
+    return request(app)
+      .get("/api/articles/1/comments?p=invalid")
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Bad request");
+      });
+  });
+  test("GET 400: should respond with appropriate status and msg when limit query is invalid", () => {
+    return request(app)
+      .get("/api/articles/1/comments?limit=invalid")
       .expect(400)
       .then(({ body: { msg } }) => {
         expect(msg).toBe("Bad request");

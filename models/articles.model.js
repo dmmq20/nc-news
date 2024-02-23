@@ -70,17 +70,17 @@ function selectArticles(
   });
 }
 
-function selectArticleCommentsById(id) {
-  return db
-    .query(
-      `
+function selectArticleCommentsById(id, p = 1, limit = 10) {
+  if (isNaN(p) || isNaN(limit)) {
+    return Promise.reject({ status: 400, msg: "Bad request" });
+  }
+  const query = `
       SELECT * FROM comments
       WHERE article_id = $1
-      ORDER BY created_at DESC;
-      `,
-      [id]
-    )
-    .then(({ rows }) => rows);
+      ORDER BY created_at DESC
+      LIMIT ${limit} OFFSET ${(p - 1) * limit}
+      `;
+  return db.query(query, [id]).then(({ rows }) => rows);
 }
 
 function insertComment(body, author, id) {

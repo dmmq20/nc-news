@@ -33,9 +33,10 @@ function getAllArticles(req, res, next) {
 
 function getArticleCommentsById(req, res, next) {
   const { article_id } = req.params;
+  const { p, limit } = req.query;
   return Promise.all([
     checkExists("articles", "article_id", article_id),
-    selectArticleCommentsById(article_id),
+    selectArticleCommentsById(article_id, p, limit),
   ])
     .then(([_, comments]) => {
       res.status(200).send({ comments });
