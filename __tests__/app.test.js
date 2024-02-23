@@ -583,8 +583,6 @@ describe("/api/articles/:article_id/comments", () => {
       });
   });
   test("POST 404: should respond with appropriate status and msg when requesting non-existent id", () => {
-    // NOTE: this sometimes fails and is likely a race condition
-    // just run the tests again
     return request(app)
       .post("/api/articles/999/comments")
       .send({ username: "lurker", body: "test comments" })
