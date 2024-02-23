@@ -77,6 +77,16 @@ describe("/api/topics", () => {
         expect(msg).toBe("Bad request");
       });
   });
+  test("POST 404: should respond with appropriate status and msg when slug already exists", () => {
+    return request(app)
+      .post("/api/topics")
+      .send({ slug: "mitch", description: "yummy things" })
+      .set("Accept", "application/json")
+      .expect(404)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Value already exists");
+      });
+  });
 });
 
 describe("/api", () => {

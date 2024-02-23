@@ -5,6 +5,9 @@ function psqlErrors(err, req, res, next) {
   if (err.code === "23503") {
     res.status(404).send({ msg: "Not found" });
   }
+  if (err.code === "23505") {
+    res.status(404).send({ msg: "Value already exists" });
+  }
   next(err);
 }
 
