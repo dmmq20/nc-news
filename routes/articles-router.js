@@ -10,15 +10,17 @@ const {
 
 const articleRouter = require("express").Router();
 
-articleRouter.get("/", getAllArticles);
-articleRouter.get("/:article_id", getArticleById);
-articleRouter.get("/:article_id/comments", getArticleCommentsById);
+articleRouter.route("/").get(getAllArticles).post(addArticle);
 
-articleRouter.post("/:article_id/comments", addComment);
-articleRouter.post("/", addArticle);
+articleRouter
+  .route("/:article_id")
+  .get(getArticleById)
+  .patch(editArticle)
+  .delete(removeArticle);
 
-articleRouter.patch("/:article_id", editArticle);
-
-articleRouter.delete("/:article_id", removeArticle);
+articleRouter
+  .route("/:article_id/comments")
+  .get(getArticleCommentsById)
+  .post(addComment);
 
 module.exports = articleRouter;
