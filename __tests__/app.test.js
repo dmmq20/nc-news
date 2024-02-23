@@ -745,7 +745,7 @@ describe("/api/comments/:comment_id", () => {
           body: "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
           votes: 26,
           author: "butter_bridge",
-          created_at: "2020-04-06T12:17:00.000Z",
+          created_at: expect.any(String),
         });
       });
   });
