@@ -7,7 +7,6 @@ const {
 } = require("./middleware/errorHandlers");
 const apiRouter = require("./routes/api-router");
 
-// this is a test
 const app = express();
 
 app.use(express.json());
