@@ -29,7 +29,8 @@ function selectArticles(
   let query = `
       SELECT a.author, title, a.article_id, a.topic, 
           a.created_at, a.votes, a.article_img_url, 
-          COUNT(comment_id) AS comment_count 
+          CAST(COUNT(comment_id) AS INTEGER) 
+          AS comment_count 
       FROM articles AS a
       LEFT JOIN comments ON a.article_id = comments.article_id`;
   let queryWithTotalCount = `
